@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -31,9 +32,11 @@ namespace SeleniumTest
             Process problema2 = null;
             try
             {
-                problema2 = Process.Start( "problema2.exe" );
+                string logFileName = "Log_" + DateTime.Now.Ticks + "_Desktop.txt";
+                problema2 = Process.Start( "problema2.exe", logFileName );
                 problema2.WaitForExit();
                 File.Delete( FakeContentFileName );
+                Assert.IsTrue( TestSuccessfully( logFileName ) );
             }
             catch
             {
@@ -46,13 +49,22 @@ namespace SeleniumTest
             }
         }
 
+        private bool TestSuccessfully(string logFileName)
+        {
+            string log = File.ReadAllText( logFileName );
+            return log.Contains( "Test successfully" );
+        }
+
         private void CreateTxtFileWithContent(string fileName, string content)
         {
             StreamWriter stream = null;
             try
             {
-                stream = File.CreateText( fileName );
-                stream.Write( content );
+                if (!File.Exists(fileName))
+                {
+                    stream = File.CreateText( fileName );
+                    stream.Write( content );
+                }
             }
             catch
             {
