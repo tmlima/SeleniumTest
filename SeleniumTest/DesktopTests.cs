@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Diagnostics;
 using System.IO;
 
 namespace SeleniumTest
@@ -10,7 +11,7 @@ namespace SeleniumTest
         const string FakeContent = "Fake content.";
 
         [TestInitialize]
-        public void MyTestInitialize()
+        public void BeforeTest()
         {
             CreateTxtFileWithContent( FakeContentFileName, FakeContent );
         }
@@ -27,7 +28,22 @@ namespace SeleniumTest
         [TestMethod]
         public void Problema2()
         {
-            File.Delete( FakeContentFileName );
+            Process problema2 = null;
+            try
+            {
+                problema2 = Process.Start( "problema2.exe" );
+                problema2.WaitForExit();
+                File.Delete( FakeContentFileName );
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (problema2 != null && !problema2.HasExited)
+                    problema2.Kill();
+            }
         }
 
         private void CreateTxtFileWithContent(string fileName, string content)

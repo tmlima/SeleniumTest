@@ -13,6 +13,15 @@ namespace SeleniumTest
     [TestClass]
     public class WebTests
     {
+        public TestContext TestContext { get; set; }
+        private Log log;
+
+        [TestInitialize]
+        public void BeforeTest()
+        {
+            log = new Log( TestContext.TestName );
+        }
+
         [TestMethod]
         public void Problema1IE()
         {
@@ -44,14 +53,19 @@ namespace SeleniumTest
 
             try
             {
+                log.WriteMessage( "Accessing " + InitialUrl );
                 driver.Navigate().GoToUrl( InitialUrl );
+                log.WriteMessage( "Finding and clicking on Contato link" );
                 driver.FindElement( By.LinkText( "CONTATO" ) ).Click();
+                log.WriteMessage( "Filling Fale Conosco fields" );
                 FillFaleConoscoFields( driver );
+                log.WriteMessage( "Taking screenshot" );
                 TakeScreenshot( driver );
+                log.WriteMessage( "Test successfully complete!" );
             }
-            catch
+            catch (Exception e)
             {
-                throw;
+                log.WriteMessage( "ERROR: " + e.Message );
             }
             finally
             {
