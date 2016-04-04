@@ -37,7 +37,7 @@ namespace SeleniumTest
                 string logFileName = "Log_" + DateTime.Now.Ticks + "_Desktop.txt";
                 problema2 = Process.Start( "problema2.exe", defaultFolder + " " + logFileName );
                 problema2.WaitForExit();
-                File.Delete( FakeContentFileName );
+                File.Delete( defaultFolder + @"\" + FakeContentFileName );
                 Assert.IsTrue( TestSuccessfully( defaultFolder, logFileName ) );
             }
             catch
