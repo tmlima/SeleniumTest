@@ -13,13 +13,15 @@ namespace SeleniumTest
     [TestClass]
     public class WebTests
     {
+        private string defaultFolder;
         public TestContext TestContext { get; set; }
         private Log log;
 
         [TestInitialize]
         public void BeforeTest()
         {
-            log = new Log( TestContext.TestName );
+            defaultFolder = @"C:\Projeto" + @"\" + DateTime.Now.Ticks + "_" + TestContext.TestName;
+            log = new Log(defaultFolder);
         }
 
         [TestMethod]
@@ -85,15 +87,12 @@ namespace SeleniumTest
 
         private void TakeScreenshot(RemoteWebDriver driver)
         {
-            const string ScreenshotsDirectory = "Screenshots";
             Screenshot screenshots = ( (ITakesScreenshot)driver ).GetScreenshot();
-            if ( !Directory.Exists( ScreenshotsDirectory ) )
+            if ( !Directory.Exists( defaultFolder ) )
             {
-                Directory.CreateDirectory( ScreenshotsDirectory );
+                Directory.CreateDirectory( defaultFolder );
             }
-            screenshots.SaveAsFile( 
-                ScreenshotsDirectory + @"\" + driver.GetType().Name + "_" + DateTime.Now.Ticks + ".png", 
-                System.Drawing.Imaging.ImageFormat.Png );
+            screenshots.SaveAsFile( defaultFolder + @"\" + "Screenshot.png", System.Drawing.Imaging.ImageFormat.Png );
         }
     }
 }

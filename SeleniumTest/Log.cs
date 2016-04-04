@@ -7,9 +7,13 @@ namespace SeleniumTest
     {
         private string fileName;
 
-        public Log(string fileName)
+        public Log(string path)
         {
-            this.fileName = "Log_" + DateTime.Now.Ticks + "_" + fileName + ".txt";
+            if ( !Directory.Exists( path ) )
+            {
+                Directory.CreateDirectory( path );
+            }
+            this.fileName = path + @"\Log.txt";
         }
 
         public void WriteMessage( string message )

@@ -8,13 +8,15 @@ namespace SeleniumTest
     [TestClass]
     public class DesktopTests
     {
-        const string FakeContentFileName = "fake.txt";
-        const string FakeContent = "Fake content.";
+        private string defaultFolder;
+        private const string FakeContentFileName = "fake.txt";
+        private const string FakeContent = "Fake content.";
 
         [TestInitialize]
         public void BeforeTest()
         {
-            CreateTxtFileWithContent( FakeContentFileName, FakeContent );
+            defaultFolder = @"C:\Projeto" + @"\" + DateTime.Now.Ticks + "_Desktop";
+            CreateTxtFileWithContent( defaultFolder, FakeContentFileName, FakeContent );
         }
 
         /// <summary>
@@ -33,10 +35,10 @@ namespace SeleniumTest
             try
             {
                 string logFileName = "Log_" + DateTime.Now.Ticks + "_Desktop.txt";
-                problema2 = Process.Start( "problema2.exe", logFileName );
+                problema2 = Process.Start( "problema2.exe", defaultFolder + " " + logFileName );
                 problema2.WaitForExit();
                 File.Delete( FakeContentFileName );
-                Assert.IsTrue( TestSuccessfully( logFileName ) );
+                Assert.IsTrue( TestSuccessfully( defaultFolder, logFileName ) );
             }
             catch
             {
@@ -49,20 +51,25 @@ namespace SeleniumTest
             }
         }
 
-        private bool TestSuccessfully(string logFileName)
+        private bool TestSuccessfully(string logFilePath, string logFileName)
         {
-            string log = File.ReadAllText( logFileName );
+            string log = File.ReadAllText( logFilePath + @"\" + logFileName );
             return log.Contains( "Test successfully" );
         }
 
-        private void CreateTxtFileWithContent(string fileName, string content)
+        private void CreateTxtFileWithContent(string path, string fileName, string content)
         {
             StreamWriter stream = null;
             try
             {
-                if (!File.Exists(fileName))
+                if (!Directory.Exists(path))
                 {
-                    stream = File.CreateText( fileName );
+                    Directory.CreateDirectory( path );
+                }
+
+                if (!File.Exists(path + @"\" + fileName))
+                {
+                    stream = File.CreateText( path + @"\" + fileName );
                     stream.Write( content );
                 }
             }
